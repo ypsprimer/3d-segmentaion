@@ -1,0 +1,115 @@
+
+prepare:
+  label_para:
+    n_label: 3
+    back_index: 0
+    ignore_index: 255
+    label_buffer: False
+  ct_low: 0
+  ct_high: 700
+#  crop_size: [24, 384, 384]
+#  crop_size: [16, 384, 384]
+  crop_size: [24, 384, 384]
+  # crop_size: [24, 192, 192]
+  margin_training: [2, 4, 4]
+  margin_inference: [2, 4, 4]
+#  margin_inference: [4, 4, 4]
+  seg_stride: 1
+  pad_mode: "reflect"
+  pad_value: -1000
+  clip: False  # Need Do Experiments to check
+  lower: 0
+  higher: 3000
+  normalize: False
+  std_normalize: True
+  channel_input: 1
+  channel_label: 1
+  img_subfix: "_new_raw.npy"
+  lab_subfix: "_new_liver_lab.npy"
+  num_encoder: 1
+  choose_top1_connect_region: False
+
+  # data_dir: "/ssd/LiverSeg/OrganSeg_ThiCK_DynamicReshape"
+  data_dir: "/ssd/Jupiter/organ_seg/OrganSeg_ThiCK_DynamicReshape"
+
+  # train_split: "/Jupiter/workspaces/hyj/organ_seg_splits/20200803_ThiCK_OnlyLiver_trainset.txt"
+  # organ_train_split: "/Jupiter/workspaces/hyj/organ_seg_splits/20200803_ThiCK_Organ_trainset.txt"
+
+  train_split: '/ssd/Jupiter/organ_seg/organ_seg_splits/20201217_t2_liver_train.txt'
+  organ_train_split: "/ssd/Jupiter/organ_seg/organ_seg_splits/20201217_thick_organ_train.txt"
+#  organ_rate: 0.3
+
+  # val_split: ["/ssd/Jupiter/organ_seg/organ_seg_splits/20201217_thick_liver_val.txt",
+  #             "/ssd/Jupiter/organ_seg/organ_seg_splits/20201217_thick_organ_val.txt"]
+
+  val_split: ["/ssd/Jupiter/organ_seg/organ_seg_splits/20201217_t2_liver_val.txt",
+              "/ssd/Jupiter/organ_seg/organ_seg_splits/20201217_thick_organ_val.txt"]
+
+  # val_split: "/ssd/Jupiter/organ_seg/organ_seg_splits/20200803_ThiCK_OnlyLiver_valset.txt"
+#  val_split: ["/Jupiter/workspaces/hyj/organ_seg_splits/20200803_ThiCK_Organ_trainset.txt",
+#              "/Jupiter/workspaces/hyj/organ_seg_splits/20200803_ThiCK_OnlyLiver_trainset.txt"]
+
+#  val_split: "/ssd/Jupiter/Tmp_Spleen/spleen_data/spleen_data_new-train.txt"
+
+  all_split: "/ssd/Jupiter/organ_seg/organ_seg_splits/20200731_Thin_Organ_valset.txt"
+  test_path: ""
+  blacklist: ['', '']
+
+net:
+  em: ["EdgeOrganSegMultiClassDiceScore"]
+  model: "multi_class_ThiCK_unet_shared_encoders_medium"
+  load_weight: ""
+  resume: True
+  strict: False
+  loss: ["OrganSegMultiClassDiceLoss"]
+
+augtype:
+  swap: False
+  swap_axis: [0, 1, 1]
+  flip: False
+  flip_axis: [0, 1, 1]
+  scale: False
+  dynamic_scale: False
+  dynamic_scale_info: '/ssd/Jupiter/organ_seg/organ_seg_splits/20200807_ThiCK_scale_info.json'
+  # dynamic_scale_info: '/Jupiter/workspaces/hyj/organ_seg_splits/20200807_ThiCK_scale_info.json'
+  scale_axis: [0, 1, 1]
+  scale_prob: 0.5
+  scale_lim: [0.8, 1.2]
+  rotate: False
+  rotate_deg_lim: 30
+
+train:
+  epoch: 100
+  start_epoch: 1
+  weight_decay: 0.0001
+  batch_size: 16
+#  lr_arg: 0.001
+  lr_arg: 0.002
+#  lr_arg: 0.005
+#  lr_func: "warm_up"
+  lr_func: "base_lr_1"
+  freeze: False
+  train_repeat: 1
+  cudnn: True
+  optimizer: "AdamW"
+  # optimizer: "SGD"
+
+output:
+  # save_dir: "2020_0730_UNET_ThiCK_OrganSeg_biggerCrop_dynamicThicknessNorm_base_v0_"
+  save_dir: "2020_1222_onlyT2_adamw-decay"
+  save_frequency: 3
+  val_frequency: 3
+  result_dir: "/yupeng/alg_jupiter_seg-local-organ_seg/results"
+  # result_dir: "/Jupiter/workspaces/hyj/alg_jupiter_seg/results/"
+  test_dir: 'test'
+  date_len: "hour"
+
+env:
+  torch_rand: 1
+  # cpu_num: 32
+  cpu_num: 8
+
+debug: False
+test: False
+val: False
+half: True
